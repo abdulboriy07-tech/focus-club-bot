@@ -90,9 +90,10 @@ async def main():
     logger.info("Ma'lumotlar bazasi initsializatsiya qilinmoqda...")
     await init_db()
 
-    # Start HTTP server for Render healthcheck & keep-alive
-    await start_web_server()
-    asyncio.create_task(keep_alive_ping())
+    # Start HTTP server for Render healthcheck & keep-alive when running standalone
+    if os.getenv("STANDALONE_SERVER", "1") == "1":
+        await start_web_server()
+        asyncio.create_task(keep_alive_ping())
 
     bot = Bot(
         token=BOT_TOKEN,
