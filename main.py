@@ -83,38 +83,12 @@ async def keep_alive_ping():
 
 
 async def main():
-    if not BOT_TOKEN:
-        logger.error("BOT_TOKEN aniqlanmadi! .env faylni tekshiring.")
-        return
-
-    logger.info("Ma'lumotlar bazasi initsializatsiya qilinmoqda...")
-    await init_db()
-
-    # Start HTTP server for Render healthcheck & keep-alive when running standalone
-    if os.getenv("STANDALONE_SERVER", "1") == "1":
-        await start_web_server()
-        asyncio.create_task(keep_alive_ping())
-
-    bot = Bot(
-        token=BOT_TOKEN,
-        session=UnverifiedSSLSession(),
-        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
-    )
-    dp = Dispatcher(storage=MemoryStorage())
-    dp.include_router(main_router)
-
-    await bot.delete_webhook(drop_pending_updates=True)
-    logger.info("Bot (@focus_club1_bot) 24/7 rejimida ishga tushdi!")
-
-    try:
-        while True:
-            try:
-                await dp.start_polling(bot, drop_pending_updates=True)
-            except Exception as e:
-                logger.error(f"Polling xatosi, 3 soniyada qayta ulanadi: {e}")
-                await asyncio.sleep(3)
-    finally:
-        await bot.session.close()
+    logger.info("Focus Club Bot Hetzner Cloud (178.105.244.3) serveriga ko'chirildi.")
+    # Start HTTP server for Render healthcheck so Render stays satisfied
+    await start_web_server()
+    logger.info("Render'dagi polling to'xtatildi, bot endi Hetzner'da ishlaydi.")
+    while True:
+        await asyncio.sleep(3600)
 
 
 if __name__ == "__main__":
